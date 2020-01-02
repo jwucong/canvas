@@ -34,7 +34,17 @@ class Canvas {
     this.line(x, y, x, y + height, options)
   }
 
+  rect(x, y, width, height, options = {}) {
+    const ctx = this.context
+    ctx.beginPath()
+    setLineStyle(ctx, options)
+    ctx.rect(x + this.pxOffset, y + this.pxOffset, width, height)
+    ctx.stroke()
+  }
+
   roundedRect(x, y, width, height, radius, options = {}) {
+    x = x + this.pxOffset
+    y = y + this.pxOffset
     const x2 = x + width
     const y2 = y + height
     const r = parseFloat(radius) || 0
@@ -53,6 +63,13 @@ class Canvas {
   circular(x, y, radius, options = {}) {
     const r = parseFloat(radius) || 0
     this.roundedRect(x - r, y - r, 2 * r, 2 * r, r, options)
+  }
+
+  regularPolygon(x, y, sides, radius) {
+    x = x + this.pxOffset
+    y = y + this.pxOffset
+    const ctx = this.context
+    ctx.beginPath()
   }
 
   text(text, x = 0, y = 0, maxWidth, options) {
@@ -83,4 +100,21 @@ function setLineStyle(ctx, style) {
   if (Array.isArray(conf.dash)) {
     ctx.setLineDash(conf.dash)
   }
+}
+
+function angleToRadian(angle) {
+  return angle * Math.PI / 180
+}
+
+function radianToAngle(radian) {
+  return 180 * radian / Math.PI
+}
+
+function getPositionByAngle(x, y, r, angle) {
+  const radian = angleToRadian(angle)
+  const offsetX = r * Math.cos(radian)
+  const offsetY = Math.sqrt(r * r - offsetX * offsetX)
+  const x1 = x + offsetX
+  const y1 = y + offsetY
+  return {x1, y1}
 }
