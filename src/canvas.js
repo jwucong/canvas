@@ -123,6 +123,25 @@ class Canvas {
     console.log('sin time: ', Date.now() - t1)
   }
 
+  tan(x, y, cycles = 1, step = 0.1, options = {}) {
+    const t1 = Date.now()
+    const scale = 30
+    const ctx = this.context
+    ctx.beginPath()
+    setLineStyle(ctx, options)
+    for (let i = 0; i < cycles * 2 * Math.PI; i += step) {
+      const x1 = x + i * scale
+      const y1 = y + Math.tan(-i) * scale
+      if (i === 0) {
+        ctx.moveTo(x1, y1)
+      } else {
+        ctx.lineTo(x1, y1)
+      }
+    }
+    ctx.stroke()
+    console.log('sin time: ', Date.now() - t1)
+  }
+
   text(text, x = 0, y = 0, maxWidth, options) {
 
   }
