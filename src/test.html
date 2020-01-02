@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <title>Title</title>
   <style>
     * {
       margin: 0;
       padding: 0;
     }
+
     html, body .container {
       box-sizing: border-box;
       width: 100%;
       height: 100%;
       overflow: hidden;
     }
+
     .container {
       background: #f7f7f7;
+      /*transform: rotate(30);*/
     }
   </style>
 </head>
@@ -33,30 +36,30 @@
   console.log(canvas)
   container.appendChild(canvas.canvas)
 
-  const OFFSET = 100
-  let ox = 100, oy = 100
-  while (ox < width) {
-    canvas.verticalLine(ox, 0, height, {style: '#999', dash: [5, 3]})
-    ox += OFFSET
-  }
-  while(oy < height) {
-    canvas.horizontalLine(0, oy, width, {style: '#999', dash: [5, 3]})
-    oy += OFFSET
-  }
-  let s = 3
-  let index = 1
-  for (; index < 10; index++) {
-    const row = Math.floor(index / 10) + 1
-    const col = index % 10
-    const o = {
-      x: OFFSET / 2 + col * OFFSET,
-      y: row * OFFSET / 2,
-    }
-    canvas.circular(o.x, o.y, OFFSET / 2)
-    regularPolygon(col + s - 1, o.x, o.y, OFFSET / 2)
-    console.log(`(row: %d, col: %d)`, row, col)
-    console.log(`o:`, o)
-  }
+  // const OFFSET = 100
+  // let ox = 100, oy = 100
+  // while (ox < width) {
+  //   canvas.verticalLine(ox, 0, height, {style: '#999', dash: [5, 3]})
+  //   ox += OFFSET
+  // }
+  // while (oy < height) {
+  //   canvas.horizontalLine(0, oy, width, {style: '#999', dash: [5, 3]})
+  //   oy += OFFSET
+  // }
+  // let s = 3
+  // let index = 1
+  // for (; index < 10; index++) {
+  //   const row = Math.floor(index / 10) + 1
+  //   const col = index % 10
+  //   const o = {
+  //     x: OFFSET / 2 + col * OFFSET,
+  //     y: row * OFFSET / 2,
+  //   }
+  //   canvas.circular(o.x, o.y, OFFSET / 2)
+  //   regularPolygon(col + s - 1, o.x, o.y, OFFSET / 2)
+  //   console.log(`(row: %d, col: %d)`, row, col)
+  //   console.log(`o:`, o)
+  // }
   const origin = {
     x: Math.floor(width / 2),
     y: Math.floor(height / 2),
@@ -64,87 +67,15 @@
   console.log('origin: ', origin)
 
 
-  // canvas.horizontalLine(0, origin.y, width, {style: '#999', dash: [5, 3]})
-  // canvas.verticalLine(origin.x, 0, height, {style: '#999', dash: [5, 3]})
-  // canvas.circular(origin.x, origin.y, R)
-  //
-  // const pos = getPositionByAngle(origin.x, origin.y, R, 36)
-  // console.log('pos: ', pos)
-  // canvas.line(origin.x, origin.y, pos.x, pos.y)
-  // const points = regularPolygon(10, origin.x, origin.y, R)
-  // console.log('points: ', points)
-  const p1 = {
-    x: ''
-  }
+  canvas.horizontalLine(0, origin.y, width, {style: '#999', dash: [5, 3]})
+  canvas.verticalLine(origin.x, 0, height, {style: '#999', dash: [5, 3]})
+  canvas.circular(origin.x, origin.y, R)
+  canvas.regularPolygon(6, origin.x, origin.y, R, {style: 'green', dash: [5, 3]})
+  canvas.sin(origin.x, origin.y, 2, 0.01, {style: 'blue', dash: []})
+  canvas.cos(origin.x, origin.y, 2, 0.01, {style: 'red', dash: [5, 3]})
 
-  function angleToRadian(angle) {
-    return angle * Math.PI / 180
-  }
 
-  function radianToAngle(radian) {
-    return 180 * radian / Math.PI
-  }
 
-  function getPositionByAngle(x, y, r, angle) {
-    angle = angle % 360
-    // angle = Math.abs(angle - 360)
-    const quadrant = Math.abs(Math.ceil(angle / 90))
-    // angle = angle - (Math.floor(angle / 180) * 180)
-    console.group('getPositionByAngle: ')
-    const radian = angleToRadian(angle)
-    let offsetX = r * Math.cos(radian)
-    let offsetY = Math.sqrt(r * r - offsetX * offsetX)
-    if (quadrant < 3) {
-      offsetY = -offsetY
-    }
-    // if (quadrant > 1 && quadrant < 4) {
-    //   offsetX = -offsetX
-    // }
-    const x1 = x + offsetX
-    const y1 = y + offsetY
-    console.log('quadrant: ', quadrant)
-    console.log('angle: ', angle)
-    console.log('radian: ', radian)
-    console.log('offsetX: ', offsetX)
-    console.log('offsetY: ', offsetY)
-    console.log('x1: ', x1)
-    console.log('y1: ', y1)
-    console.groupEnd()
-    return {x: x1, y: y1}
-  }
-
-  function regularPolygon(sides, x, y, radius){
-    const rad = 360 / sides
-    const first = 180 + 90 - rad / 2
-    const points = []
-    console.log('rad: ', rad)
-    console.log('first: ', first)
-    const ctx = canvas.context
-    ctx.beginPath()
-    ctx.strokeStyle = 'green'
-    for (let i = 0; i < sides; i++) {
-      let radi = first + i * rad
-      // radi = radi > 180 ? 180 - radi : radi
-      // console.log('radi: ', radi)
-      const angle = first + i * rad
-      const point = getPositionByAngle(x, y, radius, angle)
-      point.angle = angle
-      points.push(point)
-      // ctx.save()
-      // canvas.line(origin.x, origin.y, point.x, point.y)
-      // ctx.clip()
-      // ctx.restore()
-      if (i === 0) {
-        ctx.moveTo(point.x, point.y)
-      } else {
-        ctx.lineTo(point.x, point.y)
-      }
-      // ctx.lineTo(point.x, point.y)
-    }
-    ctx.lineTo(points[0].x, points[0].y)
-    ctx.stroke()
-    return points
-  }
 
 </script>
 

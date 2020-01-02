@@ -65,11 +65,62 @@ class Canvas {
     this.roundedRect(x - r, y - r, 2 * r, 2 * r, r, options)
   }
 
-  regularPolygon(x, y, sides, radius) {
-    x = x + this.pxOffset
-    y = y + this.pxOffset
+  regularPolygon(sides, x, y, radius, options = {}) {
+    const ctx = canvas.context
+    const deg = 360 / sides
+    let index = sides
+    ctx.beginPath()
+    setLineStyle(ctx, options)
+    while (index--) {
+      const angle = -(deg / 2 + 90 + index * deg)
+      const point = getPoint(x, y, radius, angle)
+      if (index === sides - 1) {
+        ctx.moveTo(point.x, point.y)
+      } else {
+        ctx.lineTo(point.x, point.y)
+      }
+    }
+    ctx.closePath()
+    ctx.stroke()
+  }
+
+  sin(x, y, cycles = 1, step = 0.1, options = {}) {
+    const t1 = Date.now()
+    const scale = 30
     const ctx = this.context
     ctx.beginPath()
+    setLineStyle(ctx, options)
+    ctx.moveTo(x, y)
+    for (let i = 0; i < cycles * 2 * Math.PI; i += step) {
+      const x1 = x + i * scale
+      const y1 = y + Math.sin(-i) * scale
+      if (i === 0) {
+        ctx.moveTo(x1, y1)
+      } else {
+        ctx.lineTo(x1, y1)
+      }
+    }
+    ctx.stroke()
+    console.log('sin time: ', Date.now() - t1)
+  }
+
+  cos(x, y, cycles = 1, step = 0.1, options = {}) {
+    const t1 = Date.now()
+    const scale = 30
+    const ctx = this.context
+    ctx.beginPath()
+    setLineStyle(ctx, options)
+    for (let i = 0; i < cycles * 2 * Math.PI; i += step) {
+      const x1 = x + i * scale
+      const y1 = y + Math.cos(-i) * scale
+      if (i === 0) {
+        ctx.moveTo(x1, y1)
+      } else {
+        ctx.lineTo(x1, y1)
+      }
+    }
+    ctx.stroke()
+    console.log('sin time: ', Date.now() - t1)
   }
 
   text(text, x = 0, y = 0, maxWidth, options) {
@@ -102,19 +153,28 @@ function setLineStyle(ctx, style) {
   }
 }
 
-function angleToRadian(angle) {
-  return angle * Math.PI / 180
+function degToRad(deg) {
+  return deg * Math.PI / 180
 }
 
-function radianToAngle(radian) {
-  return 180 * radian / Math.PI
+function radToDeg(rad) {
+  return rad * 180 / Math.PI
 }
 
-function getPositionByAngle(x, y, r, angle) {
-  const radian = angleToRadian(angle)
-  const offsetX = r * Math.cos(radian)
-  const offsetY = Math.sqrt(r * r - offsetX * offsetX)
-  const x1 = x + offsetX
-  const y1 = y + offsetY
-  return {x1, y1}
+function getQuadrant(angle) {
+  let deg = angle % 360
+  deg = deg < 0 ? 360 + deg : deg
+  return Math.ceil(Math.abs(deg / 90))
+}
+
+function getPoint(x, y, r, angle) {
+  const deg = angle % 360
+  const rad = degToRad(deg)
+  const q = getQuadrant(angle)
+  const dx = Math.round(r * Math.cos(rad))
+  const dy =  Math.round(Math.sqrt(r * r - dx * dx))
+  return {
+    x: x + dx + 0.5,
+    y: (q < 3 ? y - dy : y + dy) + 0.5
+  }
 }
