@@ -64,20 +64,49 @@
     x: Math.floor(width / 2),
     y: Math.floor(height / 2),
   }
-  console.log('origin: ', origin)
+  const o2 = {
+    x: R,
+    y: Math.floor(height / 2),
+  }
+  console.log('origin: (%o, %o)', origin.x, origin.y)
+  console.log('o2: (%o, %o)', o2.x, o2.y)
 
 
   canvas.horizontalLine(0, origin.y, width, {style: '#999', dash: [5, 3]})
-  canvas.verticalLine(origin.x, 0, height, {style: '#999', dash: [5, 3]})
-  canvas.circular(origin.x, origin.y, R)
-  canvas.regularPolygon(6, origin.x, origin.y, R, {style: 'green', dash: [5, 3]})
-  canvas.sin(origin.x, origin.y, 2, 0.01, {style: 'blue', dash: []})
-  canvas.cos(origin.x, origin.y, 2, 0.01, {style: 'red', dash: [5, 3]})
-  canvas.tan(origin.x, origin.y, 2, 0.01, {style: 'deeppink', dash: []})
+  // canvas.verticalLine(origin.x, 0, height, {style: '#999', dash: [5, 3]})
+  canvas.verticalLine(o2.x, 0, height, {style: '#999', dash: [5, 3]})
+  canvas.verticalLine(o2.x + 2 * Math.PI * R / 4, 0, height, {style: '#999', dash: [5, 3]})
+  canvas.verticalLine(o2.x + 2 * Math.PI * R / 2, 0, height, {style: '#999', dash: [5, 3]})
+  canvas.circular(o2.x, o2.y, R / 2)
+  // console.log('tan: ', Math.tan(Math.PI / 2))
+  canvas.trigonometricFx(function (rad, x, y) {
+    return y < 0 || y > height
+  }, Math.tan, o2.x, o2.y, R / 2, 1, 1, {style: '#CC0066'})
+  // canvas.regularPolygon(6, origin.x, origin.y, R, {style: 'green', dash: [5, 3]})
+  // canvas.sin(o2.x, o2.y, R / 2, 1, 0.01, {style: 'blue', dash: []})
+  // canvas.cos(o2.x, o2.y, R / 2, 1, 0.01, {style: 'red', dash: [5, 3]})
+  // canvas.tan(o2.x, o2.y, R / 2, 1, 0.01, {style: 'deeppink', dash: []})
+  // canvas.asin(o2.x, o2.y, R / 2, 1, 0.01, {style: '#009999', dash: []})
+  // canvas.acos(o2.x, o2.y, R / 2, 1, 0.01, {style: '#0099CC', dash: []})
+  // canvas.atan(o2.x, o2.y, R / 2, 1, 0.01, {style: '#330066', dash: []})
+  // canvas.asinh(o2.x, o2.y, R / 2, 1, 0.01, {style: '#330000', dash: []})
+  // canvas.acosh(o2.x, o2.y, R / 2, 1, 0.01, {style: '#336600', dash: []})
+  // canvas.atanh(o2.x, o2.y, R / 2, 1, 0.01, {style: '#660066', dash: []})
+  // canvas.log(o2.x, o2.y, R / 2, 1, 0.01, {style: '#990066', dash: []})
+  // canvas.fx(function (x) {
+  //   // ax^2 + bx + c
+  //   // console.log('x: ', x)
+  //   // x = x < o2.x ? -x : x
+  //   // const y = o2.y + (2 * x * x + 6 * x + 12) / R / 2
+  //   const y = 2 * x + 10
+  //   console.log('(%d, %d)', x, y)
+  //   return y
+  // }, o2.x - R / 2, o2.x + R / 2, 1, {style: '#00FF00', dash: []})
 
 
-
-
+  // function isMathEqual(a, b, e) {
+  //   return Math.abs(a - b) < e || Number.EPSILON
+  // }
 </script>
 
 </body>

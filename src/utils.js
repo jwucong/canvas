@@ -5,3 +5,7 @@ export function getType(value) {
 export function isArray(value) {
   return getType(value) === 'Array'
 }
+
+export function toArray(arrayLike) {
+  return Array.prototype.slice.call(arrayLike)
+}
