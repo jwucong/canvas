@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<script>
+
+
+  const PENDING = 'pending'
+  const FULFILLED = 'fulfilled'
+  const REJECTED = 'rejected'
+
+  const delay = (fn, t) => setTimeout(fn, t || 0)
+
+  const isFunction = fn => typeof fn === 'function'
+
+
+  // [[Resolve]](promise2, x)
+  const resolvePromise2 = function (promise2, x, resolver, rejector) {
+    if (promise2 === x) {
+      rejector(new TypeError('Circular reference'))
+    }
+  }
+
+
+  class MyPromise {
+    constructor(executor) {
+      this._state = PENDING
+      this._value = null
+      this._reason = null
+      this._exception = null
+      this._resolveCallbacks = []
+      this._rejectCallbacks = []
+      const execCallback = (callbacks, value) => {
+        callbacks.forEach(cb => cb(value))
+      }
+      const resolve = value => {
+        if (this._state !== PENDING) {
+          return
+        }
+        this._state = FULFILLED
+        this._value = value
+        execCallback(this._resolveCallbacks, value)
+      }
+      const reject = function (reason) {
+        if (this._state !== PENDING) {
+          return
+        }
+        this._state = REJECTED
+        this._reason = reason
+        execCallback(this._rejectCallbacks, reason)
+      }
+      try {
+        executor(resolve, reject)
+      } catch (e) {
+        reject(e)
+      }
+    }
+
+    then(onFulfilled, onRejected) {
+      const hasResolver = isFunction(onFulfilled)
+      const hasRejector = isFunction(onRejected)
+      const state = this._state
+      const pendingHandler = () => {
+        this._resolveCallbacks.push(onFulfilled)
+      }
+      const fulfilledHandler = () => {
+
+      }
+      const rejectedHandler = () => {
+
+      }
+      if (state === PENDING) {
+        pendingHandler()
+      } else if (state === FULFILLED) {
+        fulfilledHandler()
+      } else {
+        rejectedHandler()
+      }
+      let executor = (resolve, reject) => {
+
+      }
+      return new this.constructor(executor)
+    }
+
+    catch(onRejected) {
+      return this.then(null, onRejected)
+    }
+
+  }
+
+  const mp = new MyPromise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(1)
+    }, 1000 * 10)
+  })
+
+  const thenRe = mp.then(res => {
+    console.log('then res1: ', res)
+  })
+
+  const thenRe2 = mp.then(res => {
+    console.log('then res2: ', res)
+  })
+
+  const thenRe3 = mp.then(res => {
+    console.log('then res3: ', res)
+  })
+
+  console.log('mp: ', mp)
+  console.log('thenRe: ', thenRe)
+
+</script>
+</body>
+</html>

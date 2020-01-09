@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    .container {
+      box-sizing: border-box;
+      padding: 15px;
+      border-radius: 10px;
+      background-color: #f7f7f7;
+      margin: 0 50px 30px;
+    }
+
+    .btn {
+      width: 100px;
+      height: 40px;
+      text-align: center;
+      line-height: 40px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<div class="container"></div>
+<div class="current-count">当前计数: <span id="count">0</span></div>
+
+<button id="btn1" class="btn">加</button>
+<button id="btn2" class="btn">减</button>
+
+<script>
+  const btn1 = document.getElementById('btn1')
+  const btn2 = document.getElementById('btn2')
+  const counter = document.getElementById('count')
+  const container = document.querySelector('.container')
+  const origin = 'localhost:8888'
+  let wsid = ''
+  let ws = null
+
+  btn1.addEventListener('click', add, false)
+  btn2.addEventListener('click', jian, false)
+
+
+  getWebSocketId()
+
+  function getWebSocketId() {
+    get('/api/wsid', res => {
+      console.log('wsid res: ', res)
+      wsid = res.data
+      ws = createWebSocket(wsid)
+    }, err => {
+      console.log('wsid err: ', err)
+    })
+  }
+
+  function createWebSocket(id) {
+    const ws = new WebSocket('ws://' + origin + '/api/ws/' + id)
+
+    ws.onopen = function (event) {
+      console.log('WebSocket is open now.');
+    };
+
+    ws.onclose = function (event) {
+      console.log("WebSocket is closed now.");
+    }
+
+    ws.onerror = function (event) {
+      console.log('WebSocket connect error.');
+    };
+
+    ws.onmessage = function (event) {
+      console.log('WebSocket onmessage: ', event.data);
+      const data = JSON.parse(event.data)
+      // const p = document.createElement('p')
+      // p.innerText = event.data
+      container.innerText = event.data
+      counter.innerText = data.data
+    }
+    return ws
+  }
+
+  function add() {
+    post('/api/count/add', res => {
+      console.log('add res: ', res)
+    }, err => {
+      console.log('add err: ', err)
+    })
+  }
+
+  function jian() {
+    post('/api/count/jian', res => {
+      console.log('jian res: ', res)
+    }, err => {
+      console.log('jian err: ', err)
+    })
+  }
+
+  function http(url, method, success, error) {
+    const isPost = method.toUpperCase() === 'POST'
+    const xhr = new XMLHttpRequest()
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        typeof success === 'function' && success(JSON.parse(xhr.responseText))
+      }
+    }
+    xhr.onerror = function () {
+      typeof error === 'function' && error(xhr)
+    }
+    xhr.open(method, ['http://', origin, url].join(''), true)
+    if (isPost) {
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+      wsid && xhr.setRequestHeader('wsid', wsid)
+    }
+    xhr.send(null)
+  }
+
+  function post(url, success, error) {
+    http(url, 'POST', success, error)
+  }
+
+  function get(url, success, error) {
+    http(url, 'GET', success, error)
+  }
+
+</script>
+</body>
+</html>

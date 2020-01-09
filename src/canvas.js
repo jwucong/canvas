@@ -112,6 +112,9 @@ class Canvas {
     ctx.stroke()
   }
 
+
+
+
   sin(x, y, amplitude = 1, cycles = 1, step = 0.01, options = {}) {
     const args = [Math.sin].concat(toArray(arguments))
     return drawFx.apply(this.context, args)
@@ -172,15 +175,6 @@ class Canvas {
       x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
     }
     ctx.stroke()
-  }
-
-  animatedFx(fx, xStart, xEnd, step = 0.01, options = {}) {
-    const ctx = this.context
-    ctx.beginPath()
-    setLineStyle(ctx, options)
-    const fn = function () {
-
-    }
   }
 
   text(text, x = 0, y = 0, maxWidth, options) {

@@ -1,5 +1,20 @@
-function as() {
-  return [1].concat(arguments)
+
+
+class Test {
+  constructor(name) {
+    this.name = name
+    this.time = Date.now()
+  }
+
+  getName() {
+    return this.name
+  }
+
+  newClass(name) {
+    return new this.constructor(name)
+  }
 }
 
-console.log(Math.tan(Math.PI / 2))
+const a = new Test('a')
+
+console.log(a)

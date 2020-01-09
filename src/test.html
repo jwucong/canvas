@@ -78,10 +78,15 @@
   canvas.verticalLine(o2.x + 2 * Math.PI * R / 4, 0, height, {style: '#999', dash: [5, 3]})
   canvas.verticalLine(o2.x + 2 * Math.PI * R / 2, 0, height, {style: '#999', dash: [5, 3]})
   canvas.circular(o2.x, o2.y, R / 2)
+  // canvas.context.save()
+  // canvas.context.rect(0, o2.y - R / 2, 2 * R, R)
+  // canvas.context.clip()
+  // canvas.context.clearRect(0, o2.y - R / 2, 2 * R, R)
+  // canvas.context.restore()
   // console.log('tan: ', Math.tan(Math.PI / 2))
-  canvas.trigonometricFx(function (rad, x, y) {
-    return y < 0 || y > height
-  }, Math.tan, o2.x, o2.y, R / 2, 1, 1, {style: '#CC0066'})
+  // canvas.trigonometricFx(function (rad, x, y) {
+  //   return y < 0 || y > height
+  // }, Math.sin, o2.x, o2.y, R / 2, 1, 1, {style: '#CC0066'})
   // canvas.regularPolygon(6, origin.x, origin.y, R, {style: 'green', dash: [5, 3]})
   // canvas.sin(o2.x, o2.y, R / 2, 1, 0.01, {style: 'blue', dash: []})
   // canvas.cos(o2.x, o2.y, R / 2, 1, 0.01, {style: 'red', dash: [5, 3]})
@@ -107,6 +112,44 @@
   // function isMathEqual(a, b, e) {
   //   return Math.abs(a - b) < e || Number.EPSILON
   // }
+  anfx(1)
+  function anfx(c) {
+    let rad = 0
+    const ctx = canvas.context
+    const step = Math.PI / 50
+    const scale = R / 2
+    const fn = function() {
+      // ctx.beginPath()
+      ctx.clearRect(0, 0, canvas.canvas.width, canvas.canvas.height)
+      // canvas.horizontalLine(0, origin.y, width, {style: '#999', dash: [5, 3]})
+      // canvas.verticalLine(o2.x, 0, height, {style: '#999', dash: [5, 3]})
+      // canvas.verticalLine(o2.x + 2 * Math.PI * R / 4, 0, height, {style: '#999', dash: [5, 3]})
+      // canvas.verticalLine(o2.x + 2 * Math.PI * R / 2, 0, height, {style: '#999', dash: [5, 3]})
+      // canvas.circular(o2.x, o2.y, R / 2)
+      // ctx.closePath()
+      // ctx.lineWidth = 10
+      const x1 = o2.x + rad * scale
+      const y1 = o2.y + Math.sin(rad) * scale
+      console.log('rad: ', rad)
+      console.log('(%o, %o)', x1, y1)
+      ctx.beginPath()
+      ctx.strokeStyle = '#CC0066'
+      // ctx.moveTo(x1, y1)
+      if (rad === 0 || y1 <= 0 || y1 >= height) {
+        ctx.moveTo(x1, y1)
+      } else {
+        ctx.lineTo(x1, y1)
+      }
+      ctx.stroke()
+      rad += step
+      if (rad < c * Math.PI * 2) {
+        window.requestAnimationFrame(fn)
+      }
+    }
+    // window.requestAnimationFrame(fn)
+    fn()
+  }
+
 </script>
 
 </body>
