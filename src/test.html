@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Title</title>
   <style>
     * {
@@ -22,135 +23,94 @@
     }
   </style>
 </head>
-<body>
-<div class="container"></div>
+<body data-index="1">
+<div class="warp">
+  <div class="html"></div>
+  <div id="pp">(0, 0)</div>
+  <div class="container">
+    <div class="current-count">当前计数: <span id="count">0</span></div>
+
+    <button id="btn1" class="btn">加</button>
+    <button id="btn2" class="btn">减</button>
+    <input type="text" value="123" hidden>
+  </div>
+</div>
 
 <script src="canvas.js"></script>
+<script src="debounceAndThrottle.js"></script>
+<script src="ps.js"></script>
+<!--<script src="vps.js"></script>-->
 <script>
-  // import Canvas from './canvas'
+
+  const htmlBox = document.querySelector('.html')
+  const warp = document.querySelector('.warp')
   const container = document.querySelector('.container')
-  const R = 200
-  const width = window.innerWidth
-  const height = window.innerHeight
-  const canvas = new Canvas({width, height})
-  console.log(canvas)
-  container.appendChild(canvas.canvas)
-
-  // const OFFSET = 100
-  // let ox = 100, oy = 100
-  // while (ox < width) {
-  //   canvas.verticalLine(ox, 0, height, {style: '#999', dash: [5, 3]})
-  //   ox += OFFSET
-  // }
-  // while (oy < height) {
-  //   canvas.horizontalLine(0, oy, width, {style: '#999', dash: [5, 3]})
-  //   oy += OFFSET
-  // }
-  // let s = 3
-  // let index = 1
-  // for (; index < 10; index++) {
-  //   const row = Math.floor(index / 10) + 1
-  //   const col = index % 10
-  //   const o = {
-  //     x: OFFSET / 2 + col * OFFSET,
-  //     y: row * OFFSET / 2,
-  //   }
-  //   canvas.circular(o.x, o.y, OFFSET / 2)
-  //   regularPolygon(col + s - 1, o.x, o.y, OFFSET / 2)
-  //   console.log(`(row: %d, col: %d)`, row, col)
-  //   console.log(`o:`, o)
-  // }
-  const origin = {
-    x: Math.floor(width / 2),
-    y: Math.floor(height / 2),
-  }
-  const o2 = {
-    x: R,
-    y: Math.floor(height / 2),
-  }
-  console.log('origin: (%o, %o)', origin.x, origin.y)
-  console.log('o2: (%o, %o)', o2.x, o2.y)
-
-
-  canvas.horizontalLine(0, origin.y, width, {style: '#999', dash: [5, 3]})
-  // canvas.verticalLine(origin.x, 0, height, {style: '#999', dash: [5, 3]})
-  canvas.verticalLine(o2.x, 0, height, {style: '#999', dash: [5, 3]})
-  canvas.verticalLine(o2.x + 2 * Math.PI * R / 4, 0, height, {style: '#999', dash: [5, 3]})
-  canvas.verticalLine(o2.x + 2 * Math.PI * R / 2, 0, height, {style: '#999', dash: [5, 3]})
-  canvas.circular(o2.x, o2.y, R / 2)
-  // canvas.context.save()
-  // canvas.context.rect(0, o2.y - R / 2, 2 * R, R)
-  // canvas.context.clip()
-  // canvas.context.clearRect(0, o2.y - R / 2, 2 * R, R)
-  // canvas.context.restore()
-  // console.log('tan: ', Math.tan(Math.PI / 2))
-  // canvas.trigonometricFx(function (rad, x, y) {
-  //   return y < 0 || y > height
-  // }, Math.sin, o2.x, o2.y, R / 2, 1, 1, {style: '#CC0066'})
-  // canvas.regularPolygon(6, origin.x, origin.y, R, {style: 'green', dash: [5, 3]})
-  // canvas.sin(o2.x, o2.y, R / 2, 1, 0.01, {style: 'blue', dash: []})
-  // canvas.cos(o2.x, o2.y, R / 2, 1, 0.01, {style: 'red', dash: [5, 3]})
-  // canvas.tan(o2.x, o2.y, R / 2, 1, 0.01, {style: 'deeppink', dash: []})
-  // canvas.asin(o2.x, o2.y, R / 2, 1, 0.01, {style: '#009999', dash: []})
-  // canvas.acos(o2.x, o2.y, R / 2, 1, 0.01, {style: '#0099CC', dash: []})
-  // canvas.atan(o2.x, o2.y, R / 2, 1, 0.01, {style: '#330066', dash: []})
-  // canvas.asinh(o2.x, o2.y, R / 2, 1, 0.01, {style: '#330000', dash: []})
-  // canvas.acosh(o2.x, o2.y, R / 2, 1, 0.01, {style: '#336600', dash: []})
-  // canvas.atanh(o2.x, o2.y, R / 2, 1, 0.01, {style: '#660066', dash: []})
-  // canvas.log(o2.x, o2.y, R / 2, 1, 0.01, {style: '#990066', dash: []})
-  // canvas.fx(function (x) {
-  //   // ax^2 + bx + c
-  //   // console.log('x: ', x)
-  //   // x = x < o2.x ? -x : x
-  //   // const y = o2.y + (2 * x * x + 6 * x + 12) / R / 2
-  //   const y = 2 * x + 10
-  //   console.log('(%d, %d)', x, y)
-  //   return y
-  // }, o2.x - R / 2, o2.x + R / 2, 1, {style: '#00FF00', dash: []})
-
-
-  // function isMathEqual(a, b, e) {
-  //   return Math.abs(a - b) < e || Number.EPSILON
-  // }
-  anfx(1)
-  function anfx(c) {
-    let rad = 0
-    const ctx = canvas.context
-    const step = Math.PI / 50
-    const scale = R / 2
-    const fn = function() {
-      // ctx.beginPath()
-      ctx.clearRect(0, 0, canvas.canvas.width, canvas.canvas.height)
-      // canvas.horizontalLine(0, origin.y, width, {style: '#999', dash: [5, 3]})
-      // canvas.verticalLine(o2.x, 0, height, {style: '#999', dash: [5, 3]})
-      // canvas.verticalLine(o2.x + 2 * Math.PI * R / 4, 0, height, {style: '#999', dash: [5, 3]})
-      // canvas.verticalLine(o2.x + 2 * Math.PI * R / 2, 0, height, {style: '#999', dash: [5, 3]})
-      // canvas.circular(o2.x, o2.y, R / 2)
-      // ctx.closePath()
-      // ctx.lineWidth = 10
-      const x1 = o2.x + rad * scale
-      const y1 = o2.y + Math.sin(rad) * scale
-      console.log('rad: ', rad)
-      console.log('(%o, %o)', x1, y1)
-      ctx.beginPath()
-      ctx.strokeStyle = '#CC0066'
-      // ctx.moveTo(x1, y1)
-      if (rad === 0 || y1 <= 0 || y1 >= height) {
-        ctx.moveTo(x1, y1)
-      } else {
-        ctx.lineTo(x1, y1)
+  const layers = {}
+  //
+  const result = []
+  const a = new SimpleHtmlParser()
+  let node = {}
+  let joinHtml = ''
+  let end = true
+  const handler ={
+    startElement: function (sTagName, oAttrs) {
+      // end = true
+      console.group('startElement')
+      console.log('sTagName: ', sTagName)
+      console.log('oAttrs: ', oAttrs)
+      console.groupEnd()
+      node = {
+        tagName: sTagName,
+        attrs: oAttrs
       }
-      ctx.stroke()
-      rad += step
-      if (rad < c * Math.PI * 2) {
-        window.requestAnimationFrame(fn)
-      }
+      joinHtml += ('<' + sTagName)
+    },
+    endElement: function (sTagName) {
+      end = true
+      console.group('endElement')
+      console.log('sTagName: ', sTagName)
+      console.groupEnd()
+      result.push(node)
+      joinHtml += ('<' + sTagName + '/>')
+    },
+    characters: function (s) {
+      joinHtml += ('>' + s)
+      console.group('characters')
+      console.log('s: ', s)
+      console.groupEnd()
+      node.text = s
+    },
+    comment: function (s) {
+      console.group('comment')
+      console.log('s: ', s)
+      console.groupEnd()
+      node.comment = s
     }
-    // window.requestAnimationFrame(fn)
-    fn()
+  };
+
+  const str = warp.outerHTML
+  const html = a.parse(str, handler)
+  console.log(result)
+  console.log(joinHtml)
+
+  htmlBox.innerHTML = encodeHtml(str)
+  function encodeHtml(html) {
+    const map = {
+      '<': '&lt;',
+      '>': '&gt;',
+      '&': '&amp;',
+      '/': '&#x2F;',
+      '"': '&quot;',
+      "'": '&#x27;'
+    }
+    const regs = /\//
+    const str = Object.keys(map).join('')
+    const reg = new RegExp(`[${str}]`, 'img')
+    console.log(str)
+    console.log(reg)
+    return html.replace(reg, (m) => map[m] || '')
   }
 
 </script>
-
 </body>
 </html>
